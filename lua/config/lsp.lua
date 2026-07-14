@@ -23,19 +23,13 @@ require("mason-lspconfig").setup({
   handlers = {
     function(server_name)
       if server_name == "jdtls" then
-        return -- Skip jdtls completely, nvim-java handles it
+        return -- Skip jdtls; nvim-jdtls / LazyVim java extra handles it
+      end
+      if server_name == "java_language_server" then
+        return -- Skip georgewfraser's java-language-server; it forces organize-imports on save
       end
       require("lspconfig")[server_name].setup({})
     end,
   },
 })
 
--- Override the install function to completely prevent jdtls installation
-local mason_registry = require("mason-registry")
-local original_get_package = mason_registry.get_package
-mason_registry.get_package = function(name)
-  if name == "jdtls" then
-    error("jdtls installation is blocked - use nvim-java instead")
-  end
-  return original_get_package(name)
-end
